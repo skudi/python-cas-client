@@ -570,7 +570,14 @@ class CASResponse(object):
                     result[tag_name] = text
             elif child.nodeType == child.ELEMENT_NODE:
                 subresult = cls._parse_cas_xml_data(child)
-                result.setdefault(tag_name, {}).update(subresult)
+                element=result.setdefault(tag_name, {})
+                for key in subresult.keys():
+                    if key in element:
+                        if not isinstance(element[key], list):
+                            element[key] = [ element[key] ]
+                        element[key].append(subresult[key])
+                    else:
+                        element.update(subresult)
         return result
 
 

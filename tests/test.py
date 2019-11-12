@@ -15,6 +15,8 @@ except ImportError:
 
 class TestCase(unittest.TestCase):
 
+    maxDiff = None
+
     response_text = """
     <cas:serviceResponse xmlns:cas='http://www.yale.edu/tp/cas'>
         <cas:authenticationSuccess>
@@ -25,6 +27,8 @@ class TestCase(unittest.TestCase):
                 <cas:lastname>Ott</cas:lastname>
                 <cas:firstname>Jeffrey A</cas:firstname>
                 <cas:fullname>Jeffrey A Ott</cas:fullname>
+                <cas:role>user</cas:role>
+                <cas:role>manager</cas:role>
                 <cas:puid>0012345678</cas:puid>
             </cas:attributes>
         </cas:authenticationSuccess>
@@ -63,6 +67,7 @@ class TestCase(unittest.TestCase):
     def test_success(self):
         response = CASResponse(self.response_text)
         self.assertTrue(response.success)
+        self.assertListEqual(response.attributes[u'role'], [ u'user', u'manager' ])
         self.assertEqual(response.attributes, {
             u'i2a2characteristics': u'0,3592,2000',
             u'puid': u'0012345678',
@@ -70,6 +75,7 @@ class TestCase(unittest.TestCase):
             u'lastname': u'Ott',
             u'fullname': u'Jeffrey A Ott',
             u'email': u'jott@purdue.edu',
+            u'role': [ u'user', u'manager' ],
         })
         self.assertEqual(response.response_type, 'authenticationSuccess')
         self.assertEqual(response.user, 'jott')
@@ -100,6 +106,7 @@ class TestCase(unittest.TestCase):
             u'lastname': u'Ott',
             u'fullname': u'Jeffrey A Ott',
             u'email': u'jott@purdue.edu',
+            u'role': [ u'user', u'manager' ],
         })
         self.assertEqual(response.response_type, 'authenticationSuccess')
         self.assertEqual(response.user, 'jott')
@@ -119,6 +126,7 @@ class TestCase(unittest.TestCase):
                 headers=None
             )
         self.assertTrue(response.success)
+        self.assertListEqual(response.attributes[u'role'], [ u'user', u'manager' ])
         self.assertEqual(response.attributes, {
             u'i2a2characteristics': u'0,3592,2000',
             u'puid': u'0012345678',
@@ -126,6 +134,7 @@ class TestCase(unittest.TestCase):
             u'lastname': u'Ott',
             u'fullname': u'Jeffrey A Ott',
             u'email': u'jott@purdue.edu',
+            u'role': [ u'user', u'manager' ],
         })
         self.assertEqual(response.response_type, 'authenticationSuccess')
         self.assertEqual(response.user, 'jott')
